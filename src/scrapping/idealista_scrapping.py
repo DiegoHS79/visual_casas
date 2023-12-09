@@ -1,7 +1,6 @@
 import os
 import time
 import random
-from datetime import date
 
 import requests
 import pandas as pd
@@ -10,7 +9,7 @@ from bs4 import BeautifulSoup
 os.system("clear")
 
 url_base = "https://www.idealista.com/sala-de-prensa/informes-precio-vivienda/venta/comunitat-valenciana/alicante-alacant/alicante-alacant/"
-barrios = [
+distritos = [
     "benalua-la-florida-babel-san-gabriel",
     "campoamor-carolinas-altozano",
     "centro",
@@ -28,10 +27,10 @@ headers = {
     "set-cookie": "_pxCaptcha=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;",
 }
 
-for barrio in barrios:
+for distrito in distritos:
     secs = 0.5
-    print(f"Getting data from {barrio}")
-    r = requests.get(url_base + barrio + "/historico/", headers=headers)
+    print(f"Getting data from {distrito}")
+    r = requests.get(url_base + distrito + "/historico/", headers=headers)
     soup = BeautifulSoup(r.text, "html.parser")
 
     # header
@@ -56,7 +55,7 @@ for barrio in barrios:
         all_rows.append(single_row)
 
     df = pd.DataFrame(all_rows, columns=columns)
-    df.to_csv(f"data_temporal/{barrio.replace('-', '_')}.csv", sep="\t", index=False)
+    df.to_csv(f"data_temporal/{distrito.replace('-', '_')}.csv", sep="\t", index=False)
 
     secs += random.random()
     print(f"WARNING: Waiting for {secs} seconds for the next scrapping.\n")
