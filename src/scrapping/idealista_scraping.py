@@ -58,5 +58,5 @@ for distrito in distritos:
     df.to_csv(f"data_temporal/{distrito.replace('-', '_')}.csv", sep="\t", index=False)
 
     secs += random.random()
-    print(f"WARNING: Waiting for {secs} seconds for the next scrapping.\n")
+    print(f"WARNING: Waiting for {secs} seconds for the next scraping.\n")
     time.sleep(secs)
