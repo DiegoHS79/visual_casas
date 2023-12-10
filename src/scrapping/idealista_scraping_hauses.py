@@ -101,5 +101,3 @@ for barrio in list(hauses_ids.keys()):
         # save in every step to avoid on starting from the beginning
         with open("data_hause/all_data_hauses.json", "w") as fp:
             json.dump(all_hauses_info, fp, indent=4)
-
-    break
