@@ -9,9 +9,9 @@ os.system("clear")
 
 path = "../scraping/data_hause"
 
-idelista_file = "hause_info_summery.json"
+handmade_file = "hause_info_summary_handmade.json"
 
-with open(os.path.join(path, idelista_file), "r") as fi:
+with open(os.path.join(path, handmade_file), "r") as fi:
     idealista_info = json.load(fi)
 
 columns = [
@@ -65,12 +65,6 @@ for i, hause_id in enumerate(list(idealista_info.keys())):
     elif "calle" in title:
         df_tmp["street type"] = "calle"
         df_tmp["street"] = title.split(",")[0].split("calle")[-1]
-    elif "camino" in title:
-        df_tmp["street type"] = "camino"
-        df_tmp["street"] = title.split(",")[0].split("camino")[-1]
-    elif "carretera" in title:
-        df_tmp["street type"] = "carretera"
-        df_tmp["street"] = title.split(",")[0].split("carretera")[-1]
 
     if "s/n" in title:
         df_tmp["street_number"] = "s/n"
@@ -86,4 +80,4 @@ for i, hause_id in enumerate(list(idealista_info.keys())):
 
     # break
 
-final_df.to_csv("data_hause/hause_info.csv", index=False, sep="\t")
+final_df.to_csv("data_hause/hause_info_handmade.csv", index=False, sep="\t")
