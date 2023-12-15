@@ -10,7 +10,7 @@ import pandas as pd
 from dotenv import load_dotenv
 
 os.system("clear")
-# set your path enviromental file
+# set your path enviromental file (your path)
 load_dotenv("/home/oxcom/visual_casas/src/.env")
 
 key = os.getenv("API_KEY")
@@ -64,8 +64,6 @@ params = {
 # connexion
 i = 1
 while True:
-    # secs = 1.0
-
     params.update({"pagination": i})
     url = get_url(params=params)
 
@@ -88,12 +86,8 @@ while True:
     print(f"Iteration {i} of {total_pages}")
     if i < total_pages:
         i += 1
-        # secs += random.random() * 3.0
-        # print(f"Waiting {round(secs, 2)} seconds for the next iteration.")
-        # time.sleep(secs)
     else:
         break
 
-    # break
 
 df.to_csv("data/data_hauses.csv", index=False, sep="\t")
