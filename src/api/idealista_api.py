@@ -72,7 +72,6 @@ while True:
         headers = {"Authorization": f"Bearer {token}"}
 
     content = requests.post(url, headers=headers)
-    print(content)
     result = json.loads(content.text)
 
     # print(json.dumps(result, indent=4))
