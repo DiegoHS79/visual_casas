@@ -13,6 +13,11 @@ runtime: shiny
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(reactable)
+library(tidyverse)
+library(latex2exp)
+library(dygraphs)
+library(ggplot2)
+library(xts)
 ```
 
 # Pestaña 1
@@ -29,17 +34,17 @@ library(reactable)
 benalua_data <- read.csv("data_temporal/benalua_la_florida_babel_san_gabriel.csv", header=TRUE, sep="\t")
 benalua_data <- data.frame(benalua_data)
 benalua_data[is.na(benalua_data)] <- 0.0
-benalua_data$Mes = strptime(benalua_data$Mes, format = "%Y-%m-%d")
+benalua_data$Mes = as.POSIXct(benalua_data$Mes, format = "%Y-%m-%d", tz="UTC")
 ```
 Column {.tabset .tabset-fade}
 ---
 ### **Evolución Temporal**
 ```{r}
-renderPlot({
-  plot(benalua_data$Mes, 
-       benalua_data$Precio.m2
-  )
-})
+new_data <- benalua_data %>% select(Mes, Precio.m2)
+
+# crear archivo xts
+xts_object <- xts(x = new_data, order.by = new_data$Mes)
+dygraph(xts_object)
 ```
 
 ### **Análisis Estadístico **
@@ -55,6 +60,7 @@ Column {data-width=320}
 reactable(benalua_data, 
           filterable = TRUE,
           columns = list(
+              Mes = colDef(name = "Fecha", format = colFormat(date = TRUE, locales = "pt-BR")),
               Precio.m2 = colDef(name = "Precio\n [m2]"),
               Variación.mensual = colDef(
                 name = "Variación\n Mensual",
