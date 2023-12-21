@@ -1,0 +1,27 @@
+.navbar {
+    /* margin-top: 50px; */
+    /* margin-bottom: 50px; */
+    /* margin-right: 150px; */
+    /* margin-left: 80px; */
+    /* height: 200px; */
+    /* padding-top: 14.5px; */
+    /* padding-right: 15px; */
+    /* padding-bottom: 14.5px; */
+    /* padding-left: 15px; */
+    font-family: "Lucida Console";
+    background: rgb(2, 0, 36);
+    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(59, 101, 116, 1) 48%, rgba(0, 212, 255, 1) 100%);
+}
+
+.navbar-brand {
+    /* padding-top: 14.5px;
+    padding-right: 55px;
+    padding-bottom: 14.5px;
+    padding-left: 55px; */
+
+    /* font-size: 30px; */
+}
+
+.section.sidebar {
+    /* padding-top: 30px; */
+}

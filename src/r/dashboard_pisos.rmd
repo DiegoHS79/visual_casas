@@ -1,0 +1,140 @@
+---
+title: "Estado de la vivienda en Alicante"
+# date: "`r Sys.Date()`"
+output: 
+  flexdashboard::flex_dashboard:
+    # orientation vale para los encabezados de segundo nivel en adelante.
+    # orientation: Columns
+    vertical_layout: fill
+
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(reactable)
+```
+
+# Pestaña 1
+
+```{r}
+
+```
+
+# Benalua {data-navmenu="Evolución Por Barrios"}
+
+## Cuadro de control {.sidebar}
+
+```{r}
+benalua_data <- read.csv("data_temporal/benalua_la_florida_babel_san_gabriel.csv", header=TRUE, sep="\t")
+benalua_data <- data.frame(benalua_data)
+benalua_data[is.na(benalua_data)] <- 0.0
+benalua_data$Mes = strptime(benalua_data$Mes, format = "%Y-%m-%d")
+```
+Column {.tabset .tabset-fade}
+---
+### **Evolución Temporal**
+```{r}
+renderPlot({
+  plot(benalua_data$Mes, 
+       benalua_data$Precio.m2
+  )
+})
+```
+
+### **Análisis Estadístico **
+esto es una prueba
+
+### **Predicción**
+esto es una prueba
+
+Column {data-width=320}
+---
+### **Datos de la Tabla**
+```{r}
+reactable(benalua_data, 
+          filterable = TRUE,
+          columns = list(
+              Precio.m2 = colDef(name = "Precio\n [m2]"),
+              Variación.mensual = colDef(
+                name = "Variación\n Mensual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.trimestral = colDef(
+                name = "Variación\n Trimestral",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.anual = colDef(
+                name = "Variación\n Anual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              )
+          )
+)
+```
+
+
+# Campoamor-Carolinas-Altozano {data-navmenu="Evolución Por Barrios"}
+
+# Zona Centro {data-navmenu="Evolución Por Barrios"}
+
+# Los Ángeles-Tombola-San Nicolás {data-navmenu="Evolución Por Barrios"}
+
+# Parque Avenidas-Vistahermosa {data-navmenu="Evolución Por Barrios"}
+
+# Pla del Bon Repos-La Goleta-San Anton {data-navmenu="Evolución Por Barrios"}
+
+# Playa de San Juan-El Cabo {data-navmenu="Evolución Por Barrios"}
+
+# San Blas-Pau {data-navmenu="Evolución Por Barrios"}
+
+# Villafranqueza-Santa Faz-Monegre {data-navmenu="Evolución Por Barrios"}
+
+# Virgen del Remedio-Juan XXIII {data-navmenu="Evolución Por Barrios"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
