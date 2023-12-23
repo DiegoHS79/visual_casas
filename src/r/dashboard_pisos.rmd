@@ -35,16 +35,51 @@ benalua_data <- read.csv("data_temporal/benalua_la_florida_babel_san_gabriel.csv
 benalua_data <- data.frame(benalua_data)
 benalua_data[is.na(benalua_data)] <- 0.0
 benalua_data$Mes = as.POSIXct(benalua_data$Mes, format = "%Y-%m-%d", tz="UTC")
+
+# Shiny
+checkboxGroupInput(
+  "checkGroup", h3("Selecciona la columna"), 
+  choices = list("Precio [m2]" = benalua_data$Mes, 
+                 "Variación Mensual" = benalua_data$Variación.mensual, 
+                 "Variación Trimestral" = benalua_data$Variación.trimestral,
+                 "Variación Anual" = benalua_data$Variación.anual),
+  selected = 1
+)
 ```
 Column {.tabset .tabset-fade}
 ---
 ### **Evolución Temporal**
 ```{r}
-new_data <- benalua_data %>% select(Mes, Precio.m2)
+precio_m2 <- benalua_data %>% select(Mes, Precio.m2)
+mensual <- benalua_data %>% select(Mes, Variación.mensual)
+trimestral <- benalua_data %>% select(Mes, Variación.trimestral)
+anual <- benalua_data %>% select(Mes, Variación.anual)
+
 
 # crear archivo xts
-xts_object <- xts(x = new_data, order.by = new_data$Mes)
-dygraph(xts_object)
+xts_object <- xts(x = precio_m2, order.by = precio_m2$Mes)
+xts_object2 <- xts(x = mensual, order.by = mensual$Mes)
+xts_object3 <- xts(x = trimestral, order.by = trimestral$Mes)
+xts_object4 <- xts(x = anual, order.by = anual$Mes)
+
+all_data <- cbind(xts_object, xts_object2, xts_object3, xts_object4)
+renderDygraph({
+  dygraph(all_data) %>%
+    dySeries("Precio.m2", label = "Precio [m2]") %>%
+    dySeries("Variación.mensual", axis = 'y2', label = "Variación Mensual") %>%
+    #dySeries("Variación.trimestral", axis = 'y2', label = "Variación Trimestral") %>%
+    #dySeries("Variación.anual", axis = 'y2', label = "Variación Anual") %>%
+    dyHighlight(highlightCircleSize = 5, 
+                highlightSeriesBackgroundAlpha = 0.2,
+                hideOnMouseOut = FALSE) %>%
+    dyAxis("x", valueRange = c("01/01/2008", "01/12/2023"), label = "Año", drawGrid = TRUE) %>%
+    dyAxis("y", valueRange = c(800, 1900), label = "Precio por metro cuadrado [m2]") %>%
+    dyAxis("y2", label = "Variación porcentual [%]", independentTicks = TRUE, valueRange = c(-17, 22)) %>%
+    #dyOptions(fillGraph = TRUE, fillAlpha = 0.2, colors = 'green') %>%
+    dyHighlight(highlightSeriesOpts = list(strokeWidth = 1.5)) %>%
+    dyLegend(show = "onmouseover", labelsSeparateLines = TRUE) %>%
+    dyRangeSelector(dateWindow = c("2008-02-01", "2023-12-01"))
+})
 ```
 
 ### **Análisis Estadístico **
