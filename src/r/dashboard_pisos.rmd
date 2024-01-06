@@ -21,13 +21,13 @@ library(xts)
 library(stringr)
 ```
 
-# Pestaña 1
+# Estadísticas por Distritos/Barrios
 
 ```{r}
 
 ```
 
-# Benalua {data-navmenu="Evolución Por Barrios"}
+# Benalua - La Florida - San Gabriel {data-navmenu="Evolución IPV y Predicción"}
 
 ## Cuadro de control {.sidebar}
 
@@ -93,10 +93,7 @@ renderDygraph({
 })
 ```
 
-### **Análisis Estadístico **
-esto es una prueba
-
-### **Predicción**
+### **Predicción con Modeltime**
 esto es una prueba
 
 Column {data-width=250}
@@ -152,27 +149,1128 @@ reactable(benalua_data,
 ```
 
 
-# Campoamor-Carolinas-Altozano {data-navmenu="Evolución Por Barrios"}
+# Campoamor - Carolinas - Altozano {data-navmenu="Evolución IPV y Predicción"}
 
-# Zona Centro {data-navmenu="Evolución Por Barrios"}
+## Cuadro de control {.sidebar}
 
-# Los Ángeles-Tombola-San Nicolás {data-navmenu="Evolución Por Barrios"}
+```{r}
+campoamor_data <- read.csv("data_temporal/campoamor_carolinas_altozano.csv", header=TRUE, sep="\t")
+campoamor_data <- data.frame(campoamor_data)
+campoamor_data[is.na(campoamor_data)] <- 0.0
+campoamor_data$Mes = as.POSIXct(campoamor_data$Mes, format = "%Y-%m-%d", tz="UTC")
 
-# Parque Avenidas-Vistahermosa {data-navmenu="Evolución Por Barrios"}
+# Shiny
+checkboxGroupInput(
+  inputId = "checkGroup_c", 
+  label = h3("Selecciona la columna"), 
+  choiceNames = list("Precio [m2]", "Variación Mensual", "Variación Trimestral", "Variación Anual"),
+  choiceValues = names(campoamor_data)[-1],
+  selected = c("Precio.m2")
+)
+```
+Column {.tabset .tabset-fade}
+---
+### **Evolución Temporal**
+```{r}
+# crear archivo xts
+stat_xts_c <- xts(campoamor_data, order.by=campoamor_data$Mes)
 
-# Pla del Bon Repos-La Goleta-San Anton {data-navmenu="Evolución Por Barrios"}
+renderDygraph({
+  stat_xts_c <- stat_xts_c[, c("Mes", input$checkGroup_c)]
+  
+  graph_c <- dygraph(stat_xts_c) %>%
+    dyLegend(show = "onmouseover", labelsSeparateLines = TRUE) %>%
+    dyAxis("x", valueRange = c("01/01/2008", "01/12/2023"), label = "Año", drawGrid = TRUE) %>%
+    dyAxis("y", label = "Precio por metro cuadrado [m2]") %>%
+    dyAxis("y2", label = "Variación porcentual [%]", independentTicks = c(TRUE, TRUE), valueRange = c(-19.5, 23)) %>%
+    dyRangeSelector(dateWindow = c("2009-06-01", "2023-12-01")) %>%
+    dyHighlight(highlightCircleSize = 5,
+                highlightSeriesOpts = list(strokeWidth = 1.5),
+                highlightSeriesBackgroundAlpha = 0.2,
+                hideOnMouseOut = TRUE) %>%
+    {
+      if(length(str_subset(input$checkGroup_c, 'Precio.m2$')) > 0 )
+        dySeries(., "Precio.m2", label = "Precio [m2]")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_c, 'Variación.mensual$')) > 0 )
+        dySeries(., "Variación.mensual", axis = 'y2', label = "Variación Mensual")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_c, 'Variación.trimestral$')) > 0 )
+        dySeries(., "Variación.trimestral", axis = 'y2', label = "Variación Trimestral")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_c, 'Variación.anual$')) > 0 )
+        dySeries(., "Variación.anual", axis = 'y2', label = "Variación Anual")
+      else
+        .
+    }
+})
+```
 
-# Playa de San Juan-El Cabo {data-navmenu="Evolución Por Barrios"}
+### **Predicción con Modeltime**
+esto es una prueba
 
-# San Blas-Pau {data-navmenu="Evolución Por Barrios"}
+Column {data-width=250}
+---
+### **Datos de la Tabla**
+```{r}
+reactable(campoamor_data, 
+          filterable = TRUE,
+          columns = list(
+              Mes = colDef(name = "Fecha", format = colFormat(date = TRUE, locales = "pt-BR")),
+              Precio.m2 = colDef(name = "Precio\n [m2]"),
+              Variación.mensual = colDef(
+                name = "Variación\n Mensual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.trimestral = colDef(
+                name = "Variación\n Trimestral",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.anual = colDef(
+                name = "Variación\n Anual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              )
+          )
+)
+```
 
-# Villafranqueza-Santa Faz-Monegre {data-navmenu="Evolución Por Barrios"}
 
-# Virgen del Remedio-Juan XXIII {data-navmenu="Evolución Por Barrios"}
+# Zona Centro {data-navmenu="Evolución IPV y Predicción"}
+
+## Cuadro de control {.sidebar}
+
+```{r}
+centro_data <- read.csv("data_temporal/centro.csv", header=TRUE, sep="\t")
+centro_data <- data.frame(centro_data)
+centro_data[is.na(centro_data)] <- 0.0
+centro_data$Mes = as.POSIXct(centro_data$Mes, format = "%Y-%m-%d", tz="UTC")
+
+# Shiny
+checkboxGroupInput(
+  inputId = "checkGroup_c2", 
+  label = h3("Selecciona la columna"), 
+  choiceNames = list("Precio [m2]", "Variación Mensual", "Variación Trimestral", "Variación Anual"),
+  choiceValues = names(centro_data)[-1],
+  selected = c("Precio.m2")
+)
+```
+Column {.tabset .tabset-fade}
+---
+### **Evolución Temporal**
+```{r}
+# crear archivo xts
+stat_xts_c2 <- xts(centro_data, order.by=centro_data$Mes)
+
+renderDygraph({
+  stat_xts_c2 <- stat_xts_c2[, c("Mes", input$checkGroup_c2)]
+  
+  graph_c2 <- dygraph(stat_xts_c2) %>%
+    dyLegend(show = "onmouseover", labelsSeparateLines = TRUE) %>%
+    dyAxis("x", valueRange = c("01/01/2008", "01/12/2023"), label = "Año", drawGrid = TRUE) %>%
+    dyAxis("y", label = "Precio por metro cuadrado [m2]") %>%
+    dyAxis("y2", label = "Variación porcentual [%]", independentTicks = c(TRUE, TRUE), valueRange = c(-17, 22)) %>%
+    dyRangeSelector(dateWindow = c("2009-06-01", "2023-12-01")) %>%
+    dyHighlight(highlightCircleSize = 5,
+                highlightSeriesOpts = list(strokeWidth = 1.5),
+                highlightSeriesBackgroundAlpha = 0.2,
+                hideOnMouseOut = TRUE) %>%
+    {
+      if(length(str_subset(input$checkGroup_c2, 'Precio.m2$')) > 0 )
+        dySeries(., "Precio.m2", label = "Precio [m2]")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_c2, 'Variación.mensual$')) > 0 )
+        dySeries(., "Variación.mensual", axis = 'y2', label = "Variación Mensual")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_c2, 'Variación.trimestral$')) > 0 )
+        dySeries(., "Variación.trimestral", axis = 'y2', label = "Variación Trimestral")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_c2, 'Variación.anual$')) > 0 )
+        dySeries(., "Variación.anual", axis = 'y2', label = "Variación Anual")
+      else
+        .
+    }
+})
+```
+
+### **Predicción con Modeltime**
+esto es una prueba
+
+Column {data-width=250}
+---
+### **Datos de la Tabla**
+```{r}
+reactable(centro_data, 
+          filterable = TRUE,
+          columns = list(
+              Mes = colDef(name = "Fecha", format = colFormat(date = TRUE, locales = "pt-BR")),
+              Precio.m2 = colDef(name = "Precio\n [m2]"),
+              Variación.mensual = colDef(
+                name = "Variación\n Mensual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.trimestral = colDef(
+                name = "Variación\n Trimestral",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.anual = colDef(
+                name = "Variación\n Anual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              )
+          )
+)
+```
+
+
+# Los Ángeles - Tombola - San Nicolás {data-navmenu="Evolución IPV y Predicción"}
+
+## Cuadro de control {.sidebar}
+
+```{r}
+angeles_data <- read.csv("data_temporal/los_angeles_tombola_san_nicolas.csv", header=TRUE, sep="\t")
+angeles_data <- data.frame(angeles_data)
+angeles_data[is.na(angeles_data)] <- 0.0
+angeles_data$Mes = as.POSIXct(angeles_data$Mes, format = "%Y-%m-%d", tz="UTC")
+
+# Shiny
+checkboxGroupInput(
+  inputId = "checkGroup_a", 
+  label = h3("Selecciona la columna"), 
+  choiceNames = list("Precio [m2]", "Variación Mensual", "Variación Trimestral", "Variación Anual"),
+  choiceValues = names(angeles_data)[-1],
+  selected = c("Precio.m2")
+)
+```
+Column {.tabset .tabset-fade}
+---
+### **Evolución Temporal**
+```{r}
+# crear archivo xts
+stat_xts_a <- xts(angeles_data, order.by=angeles_data$Mes)
+
+renderDygraph({
+  stat_xts_a <- stat_xts_a[, c("Mes", input$checkGroup_a)]
+  
+  graph_a <- dygraph(stat_xts_a) %>%
+    dyLegend(show = "onmouseover", labelsSeparateLines = TRUE) %>%
+    dyAxis("x", valueRange = c("01/01/2008", "01/12/2023"), label = "Año", drawGrid = TRUE) %>%
+    dyAxis("y", label = "Precio por metro cuadrado [m2]") %>%
+    dyAxis("y2", label = "Variación porcentual [%]", independentTicks = c(TRUE, TRUE), valueRange = c(-34, 26)) %>%
+    dyRangeSelector(dateWindow = c("2009-06-01", "2023-12-01")) %>%
+    dyHighlight(highlightCircleSize = 5,
+                highlightSeriesOpts = list(strokeWidth = 1.5),
+                highlightSeriesBackgroundAlpha = 0.2,
+                hideOnMouseOut = TRUE) %>%
+    {
+      if(length(str_subset(input$checkGroup_a, 'Precio.m2$')) > 0 )
+        dySeries(., "Precio.m2", label = "Precio [m2]")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_a, 'Variación.mensual$')) > 0 )
+        dySeries(., "Variación.mensual", axis = 'y2', label = "Variación Mensual")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_a, 'Variación.trimestral$')) > 0 )
+        dySeries(., "Variación.trimestral", axis = 'y2', label = "Variación Trimestral")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_a, 'Variación.anual$')) > 0 )
+        dySeries(., "Variación.anual", axis = 'y2', label = "Variación Anual")
+      else
+        .
+    }
+})
+```
+
+### **Predicción con Modeltime**
+esto es una prueba
+
+Column {data-width=250}
+---
+### **Datos de la Tabla**
+```{r}
+reactable(angeles_data, 
+          filterable = TRUE,
+          columns = list(
+              Mes = colDef(name = "Fecha", format = colFormat(date = TRUE, locales = "pt-BR")),
+              Precio.m2 = colDef(name = "Precio\n [m2]"),
+              Variación.mensual = colDef(
+                name = "Variación\n Mensual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.trimestral = colDef(
+                name = "Variación\n Trimestral",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.anual = colDef(
+                name = "Variación\n Anual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              )
+          )
+)
+```
+
+
+# Parque Avenidas - Vistahermosa {data-navmenu="Evolución IPV y Predicción"}
+
+## Cuadro de control {.sidebar}
+
+```{r}
+vistahermosa_data <- read.csv("data_temporal/parque_avenidas_vistahermosa.csv", header=TRUE, sep="\t")
+vistahermosa_data <- data.frame(vistahermosa_data)
+vistahermosa_data[is.na(vistahermosa_data)] <- 0.0
+vistahermosa_data$Mes = as.POSIXct(vistahermosa_data$Mes, format = "%Y-%m-%d", tz="UTC")
+
+# Shiny
+checkboxGroupInput(
+  inputId = "checkGroup_v", 
+  label = h3("Selecciona la columna"), 
+  choiceNames = list("Precio [m2]", "Variación Mensual", "Variación Trimestral", "Variación Anual"),
+  choiceValues = names(vistahermosa_data)[-1],
+  selected = c("Precio.m2")
+)
+```
+Column {.tabset .tabset-fade}
+---
+### **Evolución Temporal**
+```{r}
+# crear archivo xts
+stat_xts_v <- xts(vistahermosa_data, order.by=vistahermosa_data$Mes)
+
+renderDygraph({
+  stat_xts_v <- stat_xts_v[, c("Mes", input$checkGroup_v)]
+  
+  graph_v <- dygraph(stat_xts_v) %>%
+    dyLegend(show = "onmouseover", labelsSeparateLines = TRUE) %>%
+    dyAxis("x", valueRange = c("01/01/2008", "01/12/2023"), label = "Año", drawGrid = TRUE) %>%
+    dyAxis("y", label = "Precio por metro cuadrado [m2]") %>%
+    dyAxis("y2", label = "Variación porcentual [%]", independentTicks = c(TRUE, TRUE), valueRange = c(-17, 25)) %>%
+    dyRangeSelector(dateWindow = c("2009-06-01", "2023-12-01")) %>%
+    dyHighlight(highlightCircleSize = 5,
+                highlightSeriesOpts = list(strokeWidth = 1.5),
+                highlightSeriesBackgroundAlpha = 0.2,
+                hideOnMouseOut = TRUE) %>%
+    {
+      if(length(str_subset(input$checkGroup_v, 'Precio.m2$')) > 0 )
+        dySeries(., "Precio.m2", label = "Precio [m2]")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_v, 'Variación.mensual$')) > 0 )
+        dySeries(., "Variación.mensual", axis = 'y2', label = "Variación Mensual")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_v, 'Variación.trimestral$')) > 0 )
+        dySeries(., "Variación.trimestral", axis = 'y2', label = "Variación Trimestral")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_v, 'Variación.anual$')) > 0 )
+        dySeries(., "Variación.anual", axis = 'y2', label = "Variación Anual")
+      else
+        .
+    }
+})
+```
+
+### **Predicción con Modeltime**
+esto es una prueba
+
+Column {data-width=250}
+---
+### **Datos de la Tabla**
+```{r}
+reactable(vistahermosa_data, 
+          filterable = TRUE,
+          columns = list(
+              Mes = colDef(name = "Fecha", format = colFormat(date = TRUE, locales = "pt-BR")),
+              Precio.m2 = colDef(name = "Precio\n [m2]"),
+              Variación.mensual = colDef(
+                name = "Variación\n Mensual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.trimestral = colDef(
+                name = "Variación\n Trimestral",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.anual = colDef(
+                name = "Variación\n Anual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              )
+          )
+)
+```
+
+
+# Pla del Bon Repos - La Goleta - San Anton {data-navmenu="Evolución IPV y Predicción"}
+
+## Cuadro de control {.sidebar}
+
+```{r}
+goleta_data <- read.csv("data_temporal/pla_del_bon_repos_la_goleta_san_anton.csv", header=TRUE, sep="\t")
+goleta_data <- data.frame(goleta_data)
+goleta_data[is.na(goleta_data)] <- 0.0
+goleta_data$Mes = as.POSIXct(goleta_data$Mes, format = "%Y-%m-%d", tz="UTC")
+
+# Shiny
+checkboxGroupInput(
+  inputId = "checkGroup_g", 
+  label = h3("Selecciona la columna"), 
+  choiceNames = list("Precio [m2]", "Variación Mensual", "Variación Trimestral", "Variación Anual"),
+  choiceValues = names(goleta_data)[-1],
+  selected = c("Precio.m2")
+)
+```
+Column {.tabset .tabset-fade}
+---
+### **Evolución Temporal**
+```{r}
+# crear archivo xts
+stat_xts_g <- xts(goleta_data, order.by=goleta_data$Mes)
+
+renderDygraph({
+  stat_xts_g <- stat_xts_g[, c("Mes", input$checkGroup_g)]
+  
+  graph_g <- dygraph(stat_xts_g) %>%
+    dyLegend(show = "onmouseover", labelsSeparateLines = TRUE) %>%
+    dyAxis("x", valueRange = c("01/01/2008", "01/12/2023"), label = "Año", drawGrid = TRUE) %>%
+    dyAxis("y", label = "Precio por metro cuadrado [m2]") %>%
+    dyAxis("y2", label = "Variación porcentual [%]", independentTicks = c(TRUE, TRUE), valueRange = c(-17, 25.5)) %>%
+    dyRangeSelector(dateWindow = c("2009-06-01", "2023-12-01")) %>%
+    dyHighlight(highlightCircleSize = 5,
+                highlightSeriesOpts = list(strokeWidth = 1.5),
+                highlightSeriesBackgroundAlpha = 0.2,
+                hideOnMouseOut = TRUE) %>%
+    {
+      if(length(str_subset(input$checkGroup_g, 'Precio.m2$')) > 0 )
+        dySeries(., "Precio.m2", label = "Precio [m2]")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_g, 'Variación.mensual$')) > 0 )
+        dySeries(., "Variación.mensual", axis = 'y2', label = "Variación Mensual")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_g, 'Variación.trimestral$')) > 0 )
+        dySeries(., "Variación.trimestral", axis = 'y2', label = "Variación Trimestral")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_g, 'Variación.anual$')) > 0 )
+        dySeries(., "Variación.anual", axis = 'y2', label = "Variación Anual")
+      else
+        .
+    }
+})
+```
+
+### **Predicción con Modeltime**
+esto es una prueba
+
+Column {data-width=250}
+---
+### **Datos de la Tabla**
+```{r}
+reactable(goleta_data, 
+          filterable = TRUE,
+          columns = list(
+              Mes = colDef(name = "Fecha", format = colFormat(date = TRUE, locales = "pt-BR")),
+              Precio.m2 = colDef(name = "Precio\n [m2]"),
+              Variación.mensual = colDef(
+                name = "Variación\n Mensual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.trimestral = colDef(
+                name = "Variación\n Trimestral",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.anual = colDef(
+                name = "Variación\n Anual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              )
+          )
+)
+```
+
+
+# Playa de San Juan - El Cabo {data-navmenu="Evolución IPV y Predicción"}
+
+## Cuadro de control {.sidebar}
+
+```{r}
+sanjuan_data <- read.csv("data_temporal/playa_de_san_juan_el_cabo.csv", header=TRUE, sep="\t")
+sanjuan_data <- data.frame(sanjuan_data)
+sanjuan_data[is.na(sanjuan_data)] <- 0.0
+sanjuan_data$Mes = as.POSIXct(sanjuan_data$Mes, format = "%Y-%m-%d", tz="UTC")
+
+# Shiny
+checkboxGroupInput(
+  inputId = "checkGroup_s", 
+  label = h3("Selecciona la columna"), 
+  choiceNames = list("Precio [m2]", "Variación Mensual", "Variación Trimestral", "Variación Anual"),
+  choiceValues = names(sanjuan_data)[-1],
+  selected = c("Precio.m2")
+)
+```
+Column {.tabset .tabset-fade}
+---
+### **Evolución Temporal**
+```{r}
+# crear archivo xts
+stat_xts_s <- xts(sanjuan_data, order.by=sanjuan_data$Mes)
+
+renderDygraph({
+  stat_xts_s <- stat_xts_s[, c("Mes", input$checkGroup_s)]
+  
+  graph_s <- dygraph(stat_xts_s) %>%
+    dyLegend(show = "onmouseover", labelsSeparateLines = TRUE) %>%
+    dyAxis("x", valueRange = c("01/01/2008", "01/12/2023"), label = "Año", drawGrid = TRUE) %>%
+    dyAxis("y", label = "Precio por metro cuadrado [m2]") %>%
+    dyAxis("y2", label = "Variación porcentual [%]", independentTicks = c(TRUE, TRUE), valueRange = c(-17, 25.5)) %>%
+    dyRangeSelector(dateWindow = c("2009-06-01", "2023-12-01")) %>%
+    dyHighlight(highlightCircleSize = 5,
+                highlightSeriesOpts = list(strokeWidth = 1.5),
+                highlightSeriesBackgroundAlpha = 0.2,
+                hideOnMouseOut = TRUE) %>%
+    {
+      if(length(str_subset(input$checkGroup_s, 'Precio.m2$')) > 0 )
+        dySeries(., "Precio.m2", label = "Precio [m2]")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_s, 'Variación.mensual$')) > 0 )
+        dySeries(., "Variación.mensual", axis = 'y2', label = "Variación Mensual")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_s, 'Variación.trimestral$')) > 0 )
+        dySeries(., "Variación.trimestral", axis = 'y2', label = "Variación Trimestral")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_s, 'Variación.anual$')) > 0 )
+        dySeries(., "Variación.anual", axis = 'y2', label = "Variación Anual")
+      else
+        .
+    }
+})
+```
+
+### **Predicción con Modeltime**
+esto es una prueba
+
+Column {data-width=250}
+---
+### **Datos de la Tabla**
+```{r}
+reactable(sanjuan_data, 
+          filterable = TRUE,
+          columns = list(
+              Mes = colDef(name = "Fecha", format = colFormat(date = TRUE, locales = "pt-BR")),
+              Precio.m2 = colDef(name = "Precio\n [m2]"),
+              Variación.mensual = colDef(
+                name = "Variación\n Mensual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.trimestral = colDef(
+                name = "Variación\n Trimestral",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.anual = colDef(
+                name = "Variación\n Anual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              )
+          )
+)
+```
+
+
+# San Blas - Pau {data-navmenu="Evolución IPV y Predicción"}
+
+## Cuadro de control {.sidebar}
+
+```{r}
+sanblas_data <- read.csv("data_temporal/san_blas_pau.csv", header=TRUE, sep="\t")
+sanblas_data <- data.frame(sanblas_data)
+sanblas_data[is.na(sanblas_data)] <- 0.0
+sanblas_data$Mes = as.POSIXct(sanblas_data$Mes, format = "%Y-%m-%d", tz="UTC")
+
+# Shiny
+checkboxGroupInput(
+  inputId = "checkGroup_s2", 
+  label = h3("Selecciona la columna"), 
+  choiceNames = list("Precio [m2]", "Variación Mensual", "Variación Trimestral", "Variación Anual"),
+  choiceValues = names(sanblas_data)[-1],
+  selected = c("Precio.m2")
+)
+```
+Column {.tabset .tabset-fade}
+---
+### **Evolución Temporal**
+```{r}
+# crear archivo xts
+stat_xts_s2 <- xts(sanblas_data, order.by=sanblas_data$Mes)
+
+renderDygraph({
+  stat_xts_s2 <- stat_xts_s2[, c("Mes", input$checkGroup_s2)]
+  
+  graph_s2 <- dygraph(stat_xts_s2) %>%
+    dyLegend(show = "onmouseover", labelsSeparateLines = TRUE) %>%
+    dyAxis("x", valueRange = c("01/01/2008", "01/12/2023"), label = "Año", drawGrid = TRUE) %>%
+    dyAxis("y", label = "Precio por metro cuadrado [m2]") %>%
+    dyAxis("y2", label = "Variación porcentual [%]", independentTicks = c(TRUE, TRUE), valueRange = c(-17, 22)) %>%
+    dyRangeSelector(dateWindow = c("2009-06-01", "2023-12-01")) %>%
+    dyHighlight(highlightCircleSize = 5,
+                highlightSeriesOpts = list(strokeWidth = 1.5),
+                highlightSeriesBackgroundAlpha = 0.2,
+                hideOnMouseOut = TRUE) %>%
+    {
+      if(length(str_subset(input$checkGroup_s2, 'Precio.m2$')) > 0 )
+        dySeries(., "Precio.m2", label = "Precio [m2]")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_s2, 'Variación.mensual$')) > 0 )
+        dySeries(., "Variación.mensual", axis = 'y2', label = "Variación Mensual")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_s2, 'Variación.trimestral$')) > 0 )
+        dySeries(., "Variación.trimestral", axis = 'y2', label = "Variación Trimestral")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_s2, 'Variación.anual$')) > 0 )
+        dySeries(., "Variación.anual", axis = 'y2', label = "Variación Anual")
+      else
+        .
+    }
+})
+```
+
+### **Predicción con Modeltime**
+esto es una prueba
+
+Column {data-width=250}
+---
+### **Datos de la Tabla**
+```{r}
+reactable(sanblas_data, 
+          filterable = TRUE,
+          columns = list(
+              Mes = colDef(name = "Fecha", format = colFormat(date = TRUE, locales = "pt-BR")),
+              Precio.m2 = colDef(name = "Precio\n [m2]"),
+              Variación.mensual = colDef(
+                name = "Variación\n Mensual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.trimestral = colDef(
+                name = "Variación\n Trimestral",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.anual = colDef(
+                name = "Variación\n Anual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              )
+          )
+)
+```
+
+
+# Villafranqueza - Santa Faz - Monegre {data-navmenu="Evolución IPV y Predicción"}
+
+## Cuadro de control {.sidebar}
+
+```{r}
+monegre_data <- read.csv("data_temporal/villafranqueza_santa_faz_monegre.csv", header=TRUE, sep="\t")
+monegre_data <- data.frame(monegre_data)
+monegre_data[is.na(monegre_data)] <- 0.0
+monegre_data$Mes = as.POSIXct(monegre_data$Mes, format = "%Y-%m-%d", tz="UTC")
+
+# Shiny
+checkboxGroupInput(
+  inputId = "checkGroup_m", 
+  label = h3("Selecciona la columna"), 
+  choiceNames = list("Precio [m2]", "Variación Mensual", "Variación Trimestral", "Variación Anual"),
+  choiceValues = names(monegre_data)[-1],
+  selected = c("Precio.m2")
+)
+```
+Column {.tabset .tabset-fade}
+---
+### **Evolución Temporal**
+```{r}
+# crear archivo xts
+stat_xts_m <- xts(monegre_data, order.by=monegre_data$Mes)
+
+renderDygraph({
+  stat_xts_m <- stat_xts_m[, c("Mes", input$checkGroup_m)]
+  
+  graph_m <- dygraph(stat_xts_m) %>%
+    dyLegend(show = "onmouseover", labelsSeparateLines = TRUE) %>%
+    dyAxis("x", valueRange = c("01/01/2008", "01/12/2023"), label = "Año", drawGrid = TRUE) %>%
+    dyAxis("y", label = "Precio por metro cuadrado [m2]") %>%
+    dyAxis("y2", label = "Variación porcentual [%]", independentTicks = c(TRUE, TRUE), valueRange = c(-21, 23.5)) %>%
+    dyRangeSelector(dateWindow = c("2009-06-01", "2023-12-01")) %>%
+    dyHighlight(highlightCircleSize = 5,
+                highlightSeriesOpts = list(strokeWidth = 1.5),
+                highlightSeriesBackgroundAlpha = 0.2,
+                hideOnMouseOut = TRUE) %>%
+    {
+      if(length(str_subset(input$checkGroup_m, 'Precio.m2$')) > 0 )
+        dySeries(., "Precio.m2", label = "Precio [m2]")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_m, 'Variación.mensual$')) > 0 )
+        dySeries(., "Variación.mensual", axis = 'y2', label = "Variación Mensual")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_m, 'Variación.trimestral$')) > 0 )
+        dySeries(., "Variación.trimestral", axis = 'y2', label = "Variación Trimestral")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_m, 'Variación.anual$')) > 0 )
+        dySeries(., "Variación.anual", axis = 'y2', label = "Variación Anual")
+      else
+        .
+    }
+})
+```
+
+### **Predicción con Modeltime**
+esto es una prueba
+
+Column {data-width=250}
+---
+### **Datos de la Tabla**
+```{r}
+reactable(monegre_data, 
+          filterable = TRUE,
+          columns = list(
+              Mes = colDef(name = "Fecha", format = colFormat(date = TRUE, locales = "pt-BR")),
+              Precio.m2 = colDef(name = "Precio\n [m2]"),
+              Variación.mensual = colDef(
+                name = "Variación\n Mensual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.trimestral = colDef(
+                name = "Variación\n Trimestral",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.anual = colDef(
+                name = "Variación\n Anual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              )
+          )
+)
+```
+
+
+# Virgen del Remedio - Juan XXIII {data-navmenu="Evolución IPV y Predicción"}
+
+## Cuadro de control {.sidebar}
+
+```{r}
+xiii_data <- read.csv("data_temporal/virgen_del_remedio_juan_xxiii.csv", header=TRUE, sep="\t")
+xiii_data <- data.frame(xiii_data)
+xiii_data[is.na(xiii_data)] <- 0.0
+xiii_data$Mes = as.POSIXct(xiii_data$Mes, format = "%Y-%m-%d", tz="UTC")
+
+# Shiny
+checkboxGroupInput(
+  inputId = "checkGroup_x", 
+  label = h3("Selecciona la columna"), 
+  choiceNames = list("Precio [m2]", "Variación Mensual", "Variación Trimestral", "Variación Anual"),
+  choiceValues = names(xiii_data)[-1],
+  selected = c("Precio.m2")
+)
+```
+Column {.tabset .tabset-fade}
+---
+### **Evolución Temporal**
+```{r}
+# crear archivo xts
+stat_xts_x <- xts(xiii_data, order.by=xiii_data$Mes)
+
+renderDygraph({
+  stat_xts_x <- stat_xts_x[, c("Mes", input$checkGroup_x)]
+  
+  graph_x <- dygraph(stat_xts_x) %>%
+    dyLegend(show = "onmouseover", labelsSeparateLines = TRUE) %>%
+    dyAxis("x", valueRange = c("01/01/2008", "01/12/2023"), label = "Año", drawGrid = TRUE) %>%
+    dyAxis("y", label = "Precio por metro cuadrado [m2]") %>%
+    dyAxis("y2", label = "Variación porcentual [%]", independentTicks = c(TRUE, TRUE), valueRange = c(-33, 22)) %>%
+    dyRangeSelector(dateWindow = c("2009-06-01", "2023-12-01")) %>%
+    dyHighlight(highlightCircleSize = 5,
+                highlightSeriesOpts = list(strokeWidth = 1.5),
+                highlightSeriesBackgroundAlpha = 0.2,
+                hideOnMouseOut = TRUE) %>%
+    {
+      if(length(str_subset(input$checkGroup_x, 'Precio.m2$')) > 0 )
+        dySeries(., "Precio.m2", label = "Precio [m2]")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_x, 'Variación.mensual$')) > 0 )
+        dySeries(., "Variación.mensual", axis = 'y2', label = "Variación Mensual")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_x, 'Variación.trimestral$')) > 0 )
+        dySeries(., "Variación.trimestral", axis = 'y2', label = "Variación Trimestral")
+      else
+        .
+    } %>% 
+    {
+      if(length(str_subset(input$checkGroup_x, 'Variación.anual$')) > 0 )
+        dySeries(., "Variación.anual", axis = 'y2', label = "Variación Anual")
+      else
+        .
+    }
+})
+```
+
+### **Predicción con Modeltime**
+esto es una prueba
+
+Column {data-width=250}
+---
+### **Datos de la Tabla**
+```{r}
+reactable(xiii_data, 
+          filterable = TRUE,
+          columns = list(
+              Mes = colDef(name = "Fecha", format = colFormat(date = TRUE, locales = "pt-BR")),
+              Precio.m2 = colDef(name = "Precio\n [m2]"),
+              Variación.mensual = colDef(
+                name = "Variación\n Mensual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.trimestral = colDef(
+                name = "Variación\n Trimestral",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              ),
+              Variación.anual = colDef(
+                name = "Variación\n Anual",
+                style = function(value) {
+                  if (value > 0) {
+                    color <- "#008000"
+                  } else if (value < 0) {
+                    color <- "#e00000"
+                  } else {
+                    color <- "#777"
+                  }
+                  list(color = color)
+                  }
+              )
+          )
+)
+```
 
 
 
 
+
+
+
+# Benalua - La Florida - San Gabriel {data-navmenu="Anuncios en Idealista"}
+
+# Campoamor - Carolinas - Altozano {data-navmenu="Anuncios en Idealista"}
+
+# Zona Centro {data-navmenu="Anuncios en Idealista"}
+
+# Los Ángeles - Tombola - San Nicolás {data-navmenu="Anuncios en Idealista"}
+
+# Parque Avenidas - Vistahermosa {data-navmenu="Anuncios en Idealista"}
+
+# Pla del Bon Repos - La Goleta - San Anton {data-navmenu="Anuncios en Idealista"}
+
+# Playa de San Juan - El Cabo {data-navmenu="Anuncios en Idealista"}
+
+# San Blas - Pau {data-navmenu="Anuncios en Idealista"}
+
+# Villafranqueza - Santa Faz - Monegre {data-navmenu="Anuncios en Idealista"}
+
+# Virgen del Remedio - Juan XXIII {data-navmenu="Anuncios en Idealista"}
 
 
 
