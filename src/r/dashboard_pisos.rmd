@@ -6,6 +6,7 @@ output:
     # orientation vale para los encabezados de segundo nivel en adelante.
     # orientation: Columns
     vertical_layout: fill
+    css: css_rules.css
 
 runtime: shiny
 ---
@@ -19,6 +20,9 @@ library(dygraphs)
 library(ggplot2)
 library(xts)
 library(stringr)
+library(htmltools)
+library(stringr)
+library(rjson)
 ```
 
 # Estadísticas por Distritos/Barrios
@@ -1246,13 +1250,92 @@ reactable(xiii_data,
 )
 ```
 
-
-
-
-
-
+<!-- ANUNCIOS DE IDEALISTA -->
 
 # Benalua - La Florida - San Gabriel {data-navmenu="Anuncios en Idealista"}
+
+<div class='general-container'>
+```{r}
+uiOutput("el")
+
+
+benalua_info <- read.csv("data_hauses/benalua.csv", header=TRUE, sep="\t")
+benalua_info <- data.frame(benalua_info)
+
+n_benalua <- nrow(benalua_info)
+
+divs_list <- list()
+for (i in 1:n_benalua){
+  #print(benalua_info[i,])
+  image <- benalua_info[i, "thumbnail"]
+  price <- benalua_info[i, "price"]
+  size <- benalua_info[i, "size"]
+  rooms <- benalua_info[i, "rooms"]
+  bathrooms <- benalua_info[i, "bathrooms"]
+  url <- benalua_info[i, "url"]
+  floor <- benalua_info[i, "floor"]
+  address <- benalua_info[i, "address"]
+  description <- benalua_info[i, "description"]
+  description <- substr(description, 1, 100)
+  hasLift <- benalua_info[i, "hasLift"]
+  parkingSpace <- benalua_info[i, "parkingSpace"]
+  if (grepl("True", parkingSpace, fixed=TRUE)){
+    pakring_description = "Garaje incluido"
+  } else {
+    pakring_description = ""
+  }
+  
+  # lift
+  if (hasLift == "True"){
+    hasLift_desc <- "con ascensor"
+  } else {
+    hasLift_desc <- "sin ascensor"
+  }
+  
+  # garage
+  #json_data <- fromJSON(paste(readLines(json_file), collapse=""))
+  
+  p <- str_glue(
+"<div class='article-container'>",
+  "<div class='info-container'>",
+    "<figure class='figure-center'>",
+      "<img src={image} alt='No Image Found' height='150' width='210' class='multimedia-figure'>",
+    "</figure>",
+    "<div class='info-text'>",
+      "<a href='{url}' role='heading' aria-level='2' class='item-link'>",
+          "{address}",
+      "</a>",
+      "<div class='price-row'>",
+          "<span class='item-price'>{price} € </span>",
+          "<span>- {pakring_description}</span>",
+      "</div>",
+      "<div>",
+          "<span class='item-detail'>{rooms} hab. </span>",
+          "<span class='item-detail'>- {size} m² </span>",
+          "<span class='item-detail'>- Planta {floor}ª {hasLift_desc}</span>",
+      "</div>",
+      "<div class='item-description'>",
+          "<p class='ellipsis'>{description}...</p>",
+      "</div>",
+    "</div>",
+  "</div>",
+"</div>"
+  )
+  
+  divs_list[i] <- p
+}
+
+
+
+#div_list <- list(p, p, p)
+
+output$el <- renderUI({
+  lapply(divs_list, function(x){
+    HTML(x)
+  })
+})
+```
+</div>
 
 # Campoamor - Carolinas - Altozano {data-navmenu="Anuncios en Idealista"}
 
