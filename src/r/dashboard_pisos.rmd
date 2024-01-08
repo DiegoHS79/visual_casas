@@ -1325,10 +1325,6 @@ for (i in 1:n_benalua){
   divs_list[i] <- p
 }
 
-
-
-#div_list <- list(p, p, p)
-
 output$el <- renderUI({
   lapply(divs_list, function(x){
     HTML(x)
@@ -1339,17 +1335,393 @@ output$el <- renderUI({
 
 # Campoamor - Carolinas - Altozano {data-navmenu="Anuncios en Idealista"}
 
+<div class='general-container'>
+```{r}
+uiOutput("el_c")
+
+
+campoamor_info <- read.csv("data_hauses/campoamor.csv", header=TRUE, sep="\t")
+campoamor_info <- data.frame(campoamor_info)
+
+divs_list_c <- list()
+for (i in 1:nrow(campoamor_info)){
+  #print(benalua_info[i,])
+  image_c <- campoamor_info[i, "thumbnail"]
+  price_c <- campoamor_info[i, "price"]
+  size_c <- campoamor_info[i, "size"]
+  rooms_c <- campoamor_info[i, "rooms"]
+  bathrooms_c <- campoamor_info[i, "bathrooms"]
+  url_c <- campoamor_info[i, "url"]
+  floor_c <- campoamor_info[i, "floor"]
+  address_c <- campoamor_info[i, "address"]
+  description_c <- campoamor_info[i, "description"]
+  description_c <- substr(description_c, 1, 100)
+  hasLift_c <- campoamor_info[i, "hasLift"]
+  parkingSpace_c <- campoamor_info[i, "parkingSpace"]
+  if (grepl("True", parkingSpace_c, fixed=TRUE)){
+    pakring_description_c = "Garaje incluido"
+  } else {
+    pakring_description_c = ""
+  }
+  
+  # lift
+  if (hasLift_c == "True"){
+    hasLift_desc_c <- "con ascensor"
+  } else {
+    hasLift_desc_c <- "sin ascensor"
+  }
+  
+  # garage
+  #json_data <- fromJSON(paste(readLines(json_file), collapse=""))
+  
+  p_c <- str_glue(
+"<div class='article-container'>",
+  "<div class='info-container'>",
+    "<figure class='figure-center'>",
+      "<img src={image_c} alt='No Image Found' height='150' width='210' class='multimedia-figure'>",
+    "</figure>",
+    "<div class='info-text'>",
+      "<a href='{url_c}' role='heading' aria-level='2' class='item-link'>",
+          "{address_c}",
+      "</a>",
+      "<div class='price-row'>",
+          "<span class='item-price'>{price_c} € </span>",
+          "<span>- {pakring_description_c}</span>",
+      "</div>",
+      "<div>",
+          "<span class='item-detail'>{rooms_c} hab. </span>",
+          "<span class='item-detail'>- {size_c} m² </span>",
+          "<span class='item-detail'>- Planta {floor_c}ª {hasLift_desc_c}</span>",
+      "</div>",
+      "<div class='item-description'>",
+          "<p class='ellipsis'>{description_c}...</p>",
+      "</div>",
+    "</div>",
+  "</div>",
+"</div>"
+  )
+  
+  divs_list_c[i] <- p_c
+}
+
+output$el_c <- renderUI({
+  lapply(divs_list_c, function(x){
+    HTML(x)
+  })
+})
+```
+</div>
+
 # Zona Centro {data-navmenu="Anuncios en Idealista"}
+
+<div class='general-container'>
+```{r}
+uiOutput("el_c2")
+
+
+centro_info <- read.csv("data_hauses/centro.csv", header=TRUE, sep="\t")
+centro_info <- data.frame(centro_info)
+
+divs_list_c2 <- list()
+for (i in 1:nrow(centro_info)){
+  #print(benalua_info[i,])
+  image_c2 <- centro_info[i, "thumbnail"]
+  price_c2 <- centro_info[i, "price"]
+  size_c2 <- centro_info[i, "size"]
+  rooms_c2 <- centro_info[i, "rooms"]
+  bathrooms_c2 <- centro_info[i, "bathrooms"]
+  url_c2 <- centro_info[i, "url"]
+  floor_c2 <- centro_info[i, "floor"]
+  address_c2 <- centro_info[i, "address"]
+  description_c2 <- centro_info[i, "description"]
+  description_c2 <- substr(description_c2, 1, 100)
+  hasLift_c2 <- centro_info[i, "hasLift"]
+  parkingSpace_c2 <- centro_info[i, "parkingSpace"]
+  if (grepl("True", parkingSpace_c2, fixed=TRUE)){
+    pakring_description_c2 = "Garaje incluido"
+  } else {
+    pakring_description_c2 = ""
+  }
+  
+  # lift
+  if (hasLift_c2 == "True"){
+    hasLift_desc_c2 <- "con ascensor"
+  } else {
+    hasLift_desc_c2 <- "sin ascensor"
+  }
+  
+  # garage
+  #json_data <- fromJSON(paste(readLines(json_file), collapse=""))
+  
+  p_c2 <- str_glue(
+"<div class='article-container'>",
+  "<div class='info-container'>",
+    "<figure class='figure-center'>",
+      "<img src={image_c2} alt='No Image Found' height='150' width='210' class='multimedia-figure'>",
+    "</figure>",
+    "<div class='info-text'>",
+      "<a href='{url_c2}' role='heading' aria-level='2' class='item-link'>",
+          "{address_c2}",
+      "</a>",
+      "<div class='price-row'>",
+          "<span class='item-price'>{price_c2} € </span>",
+          "<span>- {pakring_description_c2}</span>",
+      "</div>",
+      "<div>",
+          "<span class='item-detail'>{rooms_c2} hab. </span>",
+          "<span class='item-detail'>- {size_c2} m² </span>",
+          "<span class='item-detail'>- Planta {floor_c2}ª {hasLift_desc_c2}</span>",
+      "</div>",
+      "<div class='item-description'>",
+          "<p class='ellipsis'>{description_c2}...</p>",
+      "</div>",
+    "</div>",
+  "</div>",
+"</div>"
+  )
+  
+  divs_list_c2[i] <- p_c2
+}
+
+output$el_c2 <- renderUI({
+  lapply(divs_list_c2, function(x){
+    HTML(x)
+  })
+})
+```
+</div>
 
 # Los Ángeles - Tombola - San Nicolás {data-navmenu="Anuncios en Idealista"}
 
 # Parque Avenidas - Vistahermosa {data-navmenu="Anuncios en Idealista"}
 
+<div class='general-container'>
+```{r}
+uiOutput("el_v")
+
+
+vistahermosa_info <- read.csv("data_hauses/vistahermosa.csv", header=TRUE, sep="\t")
+vistahermosa_info <- data.frame(vistahermosa_info)
+
+divs_list_v <- list()
+for (i in 1:nrow(vistahermosa_info)){
+  #print(benalua_info[i,])
+  image_v <- vistahermosa_info[i, "thumbnail"]
+  price_v <- vistahermosa_info[i, "price"]
+  size_v <- vistahermosa_info[i, "size"]
+  rooms_v <- vistahermosa_info[i, "rooms"]
+  bathrooms_v <- vistahermosa_info[i, "bathrooms"]
+  url_v <- vistahermosa_info[i, "url"]
+  floor_v <- vistahermosa_info[i, "floor"]
+  address_v <- vistahermosa_info[i, "address"]
+  description_v <- vistahermosa_info[i, "description"]
+  description_v <- substr(description_v, 1, 100)
+  hasLift_v <- vistahermosa_info[i, "hasLift"]
+  parkingSpace_v <- vistahermosa_info[i, "parkingSpace"]
+  if (grepl("True", parkingSpace_v, fixed=TRUE)){
+    pakring_description_v = "Garaje incluido"
+  } else {
+    pakring_description_v = ""
+  }
+  
+  # lift
+  if (hasLift_v == "True"){
+    hasLift_desc_v <- "con ascensor"
+  } else {
+    hasLift_desc_v <- "sin ascensor"
+  }
+  
+  p_v <- str_glue(
+"<div class='article-container'>",
+  "<div class='info-container'>",
+    "<figure class='figure-center'>",
+      "<img src={image_v} alt='No Image Found' height='150' width='210' class='multimedia-figure'>",
+    "</figure>",
+    "<div class='info-text'>",
+      "<a href='{url_v}' role='heading' aria-level='2' class='item-link'>",
+          "{address_v}",
+      "</a>",
+      "<div class='price-row'>",
+          "<span class='item-price'>{price_v} € </span>",
+          "<span>- {pakring_description_v}</span>",
+      "</div>",
+      "<div>",
+          "<span class='item-detail'>{rooms_v} hab. </span>",
+          "<span class='item-detail'>- {size_v} m² </span>",
+          "<span class='item-detail'>- Planta {floor_v}ª {hasLift_desc_v}</span>",
+      "</div>",
+      "<div class='item-description'>",
+          "<p class='ellipsis'>{description_v}...</p>",
+      "</div>",
+    "</div>",
+  "</div>",
+"</div>"
+  )
+  
+  divs_list_v[i] <- p_v
+}
+
+output$el_v <- renderUI({
+  lapply(divs_list_v, function(x){
+    HTML(x)
+  })
+})
+```
+</div>
+
 # Pla del Bon Repos - La Goleta - San Anton {data-navmenu="Anuncios en Idealista"}
 
 # Playa de San Juan - El Cabo {data-navmenu="Anuncios en Idealista"}
 
+<div class='general-container'>
+```{r}
+uiOutput("el_s")
+
+
+sanjuan_info <- read.csv("data_hauses/sanjuan.csv", header=TRUE, sep="\t")
+sanjuan_info <- data.frame(sanjuan_info)
+
+divs_list_s <- list()
+for (i in 1:nrow(sanjuan_info)){
+  #print(benalua_info[i,])
+  image_s <- sanjuan_info[i, "thumbnail"]
+  price_s <- sanjuan_info[i, "price"]
+  size_s <- sanjuan_info[i, "size"]
+  rooms_s <- sanjuan_info[i, "rooms"]
+  bathrooms_s <- sanjuan_info[i, "bathrooms"]
+  url_s <- sanjuan_info[i, "url"]
+  floor_s <- sanjuan_info[i, "floor"]
+  address_s <- sanjuan_info[i, "address"]
+  description_s <- sanjuan_info[i, "description"]
+  description_s <- substr(description_s, 1, 100)
+  hasLift_s <- sanjuan_info[i, "hasLift"]
+  parkingSpace_s <- sanjuan_info[i, "parkingSpace"]
+  if (grepl("True", parkingSpace_s, fixed=TRUE)){
+    pakring_description_s = "Garaje incluido"
+  } else {
+    pakring_description_s = ""
+  }
+  
+  # lift
+  if (hasLift_s == "True"){
+    hasLift_desc_s <- "con ascensor"
+  } else {
+    hasLift_desc_s <- "sin ascensor"
+  }
+  
+  p_s <- str_glue(
+"<div class='article-container'>",
+  "<div class='info-container'>",
+    "<figure class='figure-center'>",
+      "<img src={image_s} alt='No Image Found' height='150' width='210' class='multimedia-figure'>",
+    "</figure>",
+    "<div class='info-text'>",
+      "<a href='{url_s}' role='heading' aria-level='2' class='item-link'>",
+          "{address_s}",
+      "</a>",
+      "<div class='price-row'>",
+          "<span class='item-price'>{price_s} € </span>",
+          "<span>- {pakring_description_s}</span>",
+      "</div>",
+      "<div>",
+          "<span class='item-detail'>{rooms_s} hab. </span>",
+          "<span class='item-detail'>- {size_s} m² </span>",
+          "<span class='item-detail'>- Planta {floor_s}ª {hasLift_desc_s}</span>",
+      "</div>",
+      "<div class='item-description'>",
+          "<p class='ellipsis'>{description_s}...</p>",
+      "</div>",
+    "</div>",
+  "</div>",
+"</div>"
+  )
+  
+  divs_list_s[i] <- p_s
+}
+
+output$el_s <- renderUI({
+  lapply(divs_list_s, function(x){
+    HTML(x)
+  })
+})
+```
+</div>
+
 # San Blas - Pau {data-navmenu="Anuncios en Idealista"}
+
+<div class='general-container'>
+```{r}
+uiOutput("el_s2")
+
+
+sanblas_info <- read.csv("data_hauses/sanblas.csv", header=TRUE, sep="\t")
+sanblas_info <- data.frame(sanblas_info)
+
+divs_list_s2 <- list()
+for (i in 1:nrow(sanblas_info)){
+  #print(benalua_info[i,])
+  image_s2 <- sanblas_info[i, "thumbnail"]
+  price_s2 <- sanblas_info[i, "price"]
+  size_s2 <- sanblas_info[i, "size"]
+  rooms_s2 <- sanblas_info[i, "rooms"]
+  bathrooms_s2 <- sanblas_info[i, "bathrooms"]
+  url_s2 <- sanblas_info[i, "url"]
+  floor_s2 <- sanblas_info[i, "floor"]
+  address_s2 <- sanblas_info[i, "address"]
+  description_s2 <- sanblas_info[i, "description"]
+  description_s2 <- substr(description_s2, 1, 100)
+  hasLift_s2 <- sanblas_info[i, "hasLift"]
+  parkingSpace_s2 <- sanblas_info[i, "parkingSpace"]
+  if (grepl("True", parkingSpace_s2, fixed=TRUE)){
+    pakring_description_s2 <- "Garaje incluido"
+  } else {
+    pakring_description_s2 <- ""
+  }
+  
+  # lift
+  if (hasLift_s2 == "True"){
+    hasLift_desc_s2 <- "con ascensor"
+  } else {
+    hasLift_desc_s2 <- "sin ascensor"
+  }
+  
+  p_s2 <- str_glue(
+"<div class='article-container'>",
+  "<div class='info-container'>",
+    "<figure class='figure-center'>",
+      "<img src={image_s2} alt='No Image Found' height='150' width='210' class='multimedia-figure'>",
+    "</figure>",
+    "<div class='info-text'>",
+      "<a href='{url_s2}' role='heading' aria-level='2' class='item-link'>",
+          "{address_s2}",
+      "</a>",
+      "<div class='price-row'>",
+          "<span class='item-price'>{price_s2} € </span>",
+          "<span>- {pakring_description_s2}</span>",
+      "</div>",
+      "<div>",
+          "<span class='item-detail'>{rooms_s2} hab. </span>",
+          "<span class='item-detail'>- {size_s2} m² </span>",
+          "<span class='item-detail'>- Planta {floor_s2}ª {hasLift_desc_s}</span>",
+      "</div>",
+      "<div class='item-description'>",
+          "<p class='ellipsis'>{description_s2}...</p>",
+      "</div>",
+    "</div>",
+  "</div>",
+"</div>"
+  )
+  
+  divs_list_s2[i] <- p_s2
+}
+
+output$el_s2 <- renderUI({
+  lapply(divs_list_s2, function(x){
+    HTML(x)
+  })
+})
+```
+</div>
 
 # Villafranqueza - Santa Faz - Monegre {data-navmenu="Anuncios en Idealista"}
 

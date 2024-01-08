@@ -14,13 +14,15 @@
 }
 
 .general-container {
-    display: flex;
-    flex-direction: row;
+    /* display: flex; */
+    /* flex-direction: row; */
     width: calc(100%);
+    /* overflow-y: auto; */
+    /* overscroll-behavior: contain; */
 }
 
 .article-container {
-    display: flex;
+    /* display: flex; */
     padding-bottom: 5px;
     padding-right: 5px;
 }
@@ -45,4 +47,43 @@
 #el {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#el_c {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#el_c2 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+
+}
+
+#el_v {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+
+}
+
+#el_s {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+
+}
+
+#el_s2 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+
 }
